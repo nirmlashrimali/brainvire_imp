@@ -1,0 +1,114 @@
+<odoo>
+	<data>
+	    <record id="recruitment_form_view" model="ir.ui.view">
+			<field name="name">recruitment.form</field>
+			<field name="model">teacher.recruit</field>
+			<field name="arch" type="xml">
+			    <form string="Recruitment">
+			    	<header>
+	                    <button string="Done" type="object" name="done_progressbar"/>
+	                    <button string="Process" type="object" name="process_progressbar"  />
+	                    <button string="Need To Demo" type="object" name="demo_progressbar" attrs="{'invisible':[('current', '!=',True)]}"/>
+	                    <field name="state" widget="statusbar"/>
+	                </header>
+	                <sheet>
+					    <group>
+						    <group>
+						    	<div class="oe_tittle">
+						        <h1>
+                                <field name="name"/>
+                                </h1>
+                                </div>
+                                <field name="sequence"/>
+						        <field name="age"/>
+							    <field name="exp"/>
+							    <field name="sub"/>
+							    <!-- <field name="std"/> -->
+							    <field name="email" widget="email"/>
+							    <field name="gender"/>
+
+							    <field name="join_date" attrs="{'invisible':[('state', '!=', 'done')]}"/>
+
+							    <field name="current"/>
+								<field name="std_ids" widget="many2many_tags"/> 
+							</group>
+
+					        <group>
+								<notebook>
+								    <page string="Documents">
+								    	<group string="Document Status">
+								        <field name="doc_ids" class="section_and_note_one2many">
+								        <tree editable="bottom">
+											<field name="name"/>
+											<field name="date"/>
+											<field name="doc"/>
+									    </tree>
+									    </field>
+								        </group>
+								    </page>
+									<page string="Students">
+										<tree editable="bottom">
+										<field name="student_ids" string="Students" widget="many2many_tags"/>
+										</tree>
+									</page>
+									<page name="personal_information" string="Private Information">
+										<group string="Marital Status">
+                                        <field name="marital"/>
+                                        <field name="spouse_complete_name" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}"/>
+                                        <field name="spouse_birthdate" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}"/>
+                                       </group>
+                                       <group string="Education">
+                                           <field name="certificate"/>
+                                           <field name="study_field"/>
+                                           <field name="study_school"/>
+                                    </group>
+                                    </page>
+							    </notebook>
+							</group>
+					    </group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="recruitment_tree_view" model="ir.ui.view">
+			<field name="name">recruitment.tree</field>
+			<field name="model">teacher.recruit</field>
+			<field name="arch" type="xml">
+				<tree string="Recruitment">
+					            <field name="sequence"/>
+			                    <field name="name"/>
+							    <field name="age"/>
+							    <field name="exp"/>
+							    <field name="sub"/>
+							   <!-- <field name="std"/> -->
+							    <field name="email" widget="email"/>
+							    <field name="gender"/>
+						        <field name="state"/>
+						        <field name="join_date"/>
+						        <field name="student_ids" widget="many2many_tags"/>
+						        <field name="current"/>
+						        <field name="marital"/>
+						        <field name="std_ids" widget="many2many_tags"/>
+				</tree>
+			</field>
+		</record>
+		<record id="school_recruitment_action" model="ir.actions.act_window">
+		    <field name="name">Recruitment</field>
+			<field name="res_model">teacher.recruit</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of students and teachers
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_school" name="School"/>
+		<menuitem parent="menu_school" id="menu_recruitment" name="Recruitment"/>
+		<menuitem parent="menu_recruitment" id="submenu_interview" name="Interview" action="school_recruitment_action" />
+	<!--	<menuitem id="menu_recruitment" name="Recruitment"/>
+		<menuitem id="menu_interview" name="Interview" action="school_recruitment_action" parent="menu_recruitment"/>-->
+	</data>	
+</odoo>
+

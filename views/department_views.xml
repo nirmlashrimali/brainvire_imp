@@ -1,0 +1,44 @@
+<odoo>
+	
+	    <record id="brainvire_department_form_view" model="ir.ui.view">
+			<field name="name">department.form</field>
+			<field name="model">department.details</field>
+			<field name="arch" type="xml">
+			    <form string="Department Details">
+	                <sheet>
+					    <group>
+						    <group string=" Details">
+						        <field name="name"/>
+							    <field name="email"/>
+							    <field name="details"/>
+							</group>
+						</group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="brainvire_department_tree_view" model="ir.ui.view">
+			<field name="name">department.tree</field>
+			<field name="model">department.details</field>
+			<field name="arch" type="xml">
+			    <tree string="Department Details">
+			       
+					   <field name="name"/>
+					   <field name="email"/>
+					   <field name="details"/>                         
+			    </tree>
+			</field>
+		</record>
+		
+		<record  model="ir.actions.act_window" id="department_action">
+		    <field name="name">Department</field>
+			<field name="res_model">department.details</field>
+			<field name="view_mode">tree,form</field>
+	    </record>
+	       
+	        
+		    
+
+   	
+</odoo>

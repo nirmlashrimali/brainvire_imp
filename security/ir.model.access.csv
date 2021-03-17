@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_employee_lib,access_employee_lib,brainvire.model_employee_lib,base.group_user,1,1,1,1
+access_department_details,access_department_details,brainvire.model_department_details,base.group_user,1,1,1,1
+access_admin_admin,access_admin_admin,brainvire.model_admin_admin,base.group_user,1,1,1,1

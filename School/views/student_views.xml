@@ -1,0 +1,70 @@
+<odoo>
+	<data>
+	    <record id="student_form_view" model="ir.ui.view">
+			<field name="name">student.form</field>
+			<field name="model">student.stud</field>
+			<field name="arch" type="xml">
+			    <form string="Student">
+			    	<header>
+	                    <button string="Done" type="object" name="done_progressbar" states="draft" />
+	                    <button string="Process" type="object" name="process_progressbar"  />
+	                    <field name="state" widget="statusbar"/>
+	                </header>
+	                <sheet>
+					    <group>
+						    <group>
+						    	<div class="oe_tittle">
+						        <h1>
+                                <field name="name"/>
+                                </h1>
+                                </div>
+                                <field name="sequence"/>
+							    <field name="dob"/>
+							    <!-- <field name="std"/> -->
+							    <field name="gender"/>
+							    <field name="email" widget="email"/>
+							    <field name="pic" widget="image"/>
+							    <field name="std_id" />
+							    <field name="teacher_id" context="{'std':std_id}"/>
+							</group>
+				        </group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="student_tree_view" model="ir.ui.view">
+			<field name="name">student.tree</field>
+			<field name="model">student.stud</field>
+			<field name="arch" type="xml">
+				<tree string="Student Master">
+					    <field name="sequence"/>
+			            <field name="name"/>
+					    <field name="dob"/>
+					    <!-- <field name="std"/> -->
+					    <field name="gender"/>
+						<field name="email" widget="email"/>
+						<field name="pic" widget="image" width="30"/>
+						<field name="state"/>
+						<field name="std_id"/>
+						<field name="teacher_id" />
+				</tree>
+			</field>
+		</record>
+		<record id="school_student_action" model="ir.actions.act_window">
+		    <field name="name">Student</field>
+			<field name="res_model">student.stud</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of students and teachers
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_school" name="School"/>
+		
+		<menuitem id="menu_school_student" name="Student" action="school_student_action" parent="menu_school" sequence="1"/>
+	</data>	
+</odoo>
+

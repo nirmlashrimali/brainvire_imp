@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+      <record id="room_type_form_view" model="ir.ui.view">
+      <field name="name">roomtype.form</field>
+      <field name="model">room.type</field>
+      <field name="arch" type="xml">
+          <form string="Hotel Room Type">
+            <sheet>
+              <group>
+                <group>
+                    <field name="room_type"/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+      </field>
+    </record>
+      
+      <record id="room_type_tree_view" model="ir.ui.view">
+      <field name="name">roomtype.tree</field>
+      <field name="model">room.type</field>
+      <field name="arch" type="xml">
+          <tree string="Hotel Room Type">
+            <field name="room_type"/>
+          </tree>
+      </field>
+    </record>
+    <record id="hotel_room_type_action" model="ir.actions.act_window">
+        <field name="name">Hotel Room Type</field>
+      <field name="res_model">room.type</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">Enter details of Room Type
+                </p>
+      </field>
+      </record>
+       
+
+    <!-- <menuitem id="menu_hotel" name="Hotel"/> -->
+    
+    <menuitem id="menu_room_type" name="Hotel Room Type" action="hotel_room_type_action" parent="menu_room" sequence="2"/>
+    
+  </data> 
+</odoo>

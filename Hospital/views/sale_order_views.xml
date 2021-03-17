@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    <record id="crm_view_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">    
+          <xpath expr="//field[@name='partner_id']" position="after">
+            <field name="new_field"/>
+          </xpath>
+          <xpath expr="//field[@name='validity_date']" position="replace">
+            <field name="expiry"/>
+          </xpath>
+          <xpath expr="//field[@name='payment_term_id']" position="before">
+            <field name="age"/>
+          </xpath>
+          <xpath expr="//field[@name='age']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+        </field>
+      </record>
+</odoo>

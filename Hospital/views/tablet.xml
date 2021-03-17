@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	    <record id="tablet_form_view" model="ir.ui.view">
+			<field name="name">tablet.form</field>
+			<field name="model">patient.tablet</field>
+			<field name="arch" type="xml">
+			    <form string="Patient Tablet">
+	                <sheet>
+					    <group>
+						    <group>
+						        <field name="name"/>
+						    </group>
+						    <group>
+							    <field name="quantity"/>
+							    
+							</group>
+					    </group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="tablet_tree_view" model="ir.ui.view">
+			<field name="name">tablet.tree</field>
+			<field name="model">patient.tablet</field>
+			<field name="arch" type="xml">
+			    <tree string="Patient Tablet">
+			       
+					   <field name="name"/>
+					   <field name="quantity"/>
+				</tree>
+			</field>
+		</record>
+		<record id="patient_tablet_action" model="ir.actions.act_window">
+		    <field name="name">Patient Tablet</field>
+			<field name="res_model">patient.tablet</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of 
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_hospital" name="Hospital"/>
+		
+		<menuitem id="menu_tablet" name="Patient Tablet" action="patient_tablet_action" parent="menu_hospital"/>
+	</data>	
+</odoo>

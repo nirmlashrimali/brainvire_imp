@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+      <record id="document_regsiter_form_view" model="ir.ui.view">
+      <field name="name">document.form</field>
+      <field name="model">register.document</field>
+      <field name="arch" type="xml">
+          <form string="Hotel Register Document">
+            <sheet>
+              <group>
+                <group>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="doc"/>
+                    <field name="registration_id"/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+      </field>
+    </record>
+      
+      <record id="document_register_tree_view" model="ir.ui.view">
+      <field name="name">document.tree</field>
+      <field name="model">register.document</field>
+      <field name="arch" type="xml">
+          <tree string="Hotel Register Document">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="doc"/>
+                <field name="registration_id"/>
+          </tree>
+      </field>
+    </record>
+    <record id="hotel_register_document_action" model="ir.actions.act_window">
+        <field name="name">Hotel Register Document</field>
+      <field name="res_model">register.document</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">Enter details of Customers Register Documents
+                </p>
+      </field>
+      </record>
+       
+
+   <menuitem id="menu_hotel" name="Hotel"/>
+    
+    <menuitem id="menu_register_document" name="Hotel Register Document" action="hotel_register_document_action" parent="menu_registration" sequence="3"/>
+    
+  </data> 
+</odoo>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+      <record id="registration_form_view" model="ir.ui.view">
+      <field name="name">registration.form</field>
+      <field name="model">hotel.registration</field>
+      <field name="arch" type="xml">
+          <form string="Hotel Registration">
+              <header>
+                    <button string="Done" type="object" name="done_progressbar" states="draft" />
+                    <button string="Process" type="object" name="process_progressbar"/>
+                    <field name="state" widget="statusbar"/>
+                    <button name="%(customer_inquiry_action)d" string="Inquiry" type="action" class="oe_highlight"/>
+              </header>
+                  <sheet>
+              <group>
+                <group>
+                    <field name="name"/>
+                    <field name="register_no"/>
+                    <field name="phone"/>
+                    <field name="dob"/>
+                    <field name="room_id"/>
+                </group>
+                <group>
+                <notebook>
+                    <page string="Documents">
+                  <field name="doc_ids">
+                     <tree editable="bottom">
+                          <field name="name"/>
+                          <field name="date"/>
+                          <field name="doc"/>
+                          <field name="registration_id"/>
+                         
+                      </tree>
+                  </field>
+                </page>
+                    <page string="Guests">
+                  <field name="guest_ids">
+                     <tree editable="bottom">
+                          <field name="name"/>
+                          <field name="age"/>
+                          <field name="register_id"/>
+                      </tree>
+                  </field>
+                  </page>
+      
+              </notebook>
+              </group>
+            </group>
+            </sheet>
+          </form>
+      </field>
+    </record>
+      
+    <record id="registration_tree_view" model="ir.ui.view">
+      <field name="name">registration.tree</field>
+      <field name="model">hotel.registration</field>
+      <field name="arch" type="xml">
+          <tree string="Hotel Registration">
+                    
+                    <field name="name"/>
+                    <field name="register_no"/>
+                    <field name="phone"/>
+                    <field name="dob"/>
+                    <field name="doc_ids" widget="one2many_tags"/>
+                    <field name="guest_ids" widget="one2many_tags"/>
+                   <!--  <field name="room_ids" widget="many2many_tags"/> -->
+                    <field name="state"/>
+                    <field name="room_id"/>
+
+          </tree>
+      </field>
+    </record>
+    <record id="hotel_registration_action" model="ir.actions.act_window">
+      <field name="name">Hotel Registration</field>
+      <field name="res_model">hotel.registration</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">Enter details of Customers and Room
+                </p>
+      </field>
+    </record>
+       
+
+    <menuitem id="menu_hotel" name="Hotel"/>
+    
+    <menuitem id="menu_registration" name="Hotel Registration" parent="menu_hotel"/>
+     <menuitem id="menu_registration1" name="Registration" action="hotel_registration_action" parent="menu_registration" sequence="2"/>
+     <!-- <menuitem id="menu_room1" name="Room" action="hotel_room_action" parent="menu_room" sequence="1"/> --> 
+     <menuitem id="menu_inquiry" name="Inquiry" action="customer_inquiry_action" parent="menu_registration" sequence="1"/> 
+ 
+  </data> 
+</odoo>

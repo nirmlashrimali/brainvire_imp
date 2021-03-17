@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	    <record id="doctor_form_view" model="ir.ui.view">
+			<field name="name">doctor.form</field>
+			<field name="model">doctor.doc</field>
+			<field name="arch" type="xml">
+			    <form string="Doctor">
+	                <sheet>
+					    <group>
+						    <group string="Doctor details">
+						    	<div class="oe_tittle">
+						        <h1>
+                                <field name="name"/>
+                                </h1>
+                                </div>
+						    </group>
+						    <group>
+							    <field name="age"/>
+							    <field name="email"/>
+							    <field name="gender"/>
+							</group>
+		                <group>
+						    <notebook>
+						    	<page string="Patients">
+						    
+							        <field name="patient_ids"/>
+							    </page>
+					        </notebook>
+					    </group>   
+					    </group>   
+							
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="doctor_tree_view" model="ir.ui.view">
+			<field name="name">doctor.tree</field>
+			<field name="model">doctor.doc</field>
+			<field name="arch" type="xml">
+			    <tree string="Doctor">
+			       
+					   <field name="name"/>
+						<field name="age"/>
+						<field name="email"/>
+						<field name="gender"/>
+						<field name="patient_ids"/>
+
+						
+			    </tree>
+			</field>
+		</record>
+		<record id="doctor_search_view" model="ir.ui.view">
+            <field name="name">doctor.doc.select</field>
+            <field name="model">doctor.doc</field>
+            <field name="arch" type="xml">
+                <search string="Search Doctor">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <filter name="gender" domain="[('gender','=','male')]" string="Male"/>
+                    <filter name="gender" domain="[('gender','=','female')]" string="Female"/>
+                    <filter name="age" domain="[('age','>','21')]" string="Age"/>
+                    <group expand="0" name="group_by" string="Group By">
+                            <filter name="gender"   string ="Gender" context="{'group_by':'gender'}"/>
+                            <filter name="age" string="Age" context="{'group_by' : 'age'}"/>
+                    <!--<filter name="email" string="Email" context="{'group_by' : 'email'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+		<record id="hospital_doctor_action" model="ir.actions.act_window">
+		    <field name="name">Doctor</field>
+			<field name="res_model">doctor.doc</field>
+			<field name="view_mode">tree,form,search</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of 
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_hospital" name="Hospital"/>
+		
+		<menuitem id="menu_doctor" name="Doctor" action="hospital_doctor_action" parent="menu_hospital" sequence="1"/>
+	</data>	
+</odoo>

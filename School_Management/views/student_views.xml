@@ -1,0 +1,118 @@
+<odoo>
+	<data>
+	    <record id="school_student_form_view" model="ir.ui.view">
+			<field name="name">student.form</field>
+			<field name="model">student.master</field>
+			<field name="arch" type="xml">
+			    <form string="Student Master">
+			    	<header>
+                      <button name="search_name" string="Search Name" type="object" class="oe_highlight"/>
+                    </header>
+	                <sheet>
+					    <group>
+						    <group>
+						        <field name="name"/>
+							    <field name="dob"/>
+							    <field name="email" widget="email"/>
+							    <field name="age"/>
+							    <field name="gender"/>
+							    <field name="image" widget="image"/>
+					        </group>
+					    </group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="school_student_tree_view" model="ir.ui.view">
+			<field name="name">student.tree</field>
+			<field name="model">student.master</field>
+			<field name="arch" type="xml">
+				<tree string="Student Master">
+			    
+					    <field name="name"/>
+						<field name="dob"/>
+						<field name="email" widget="email"/>
+						<field name="age"/>
+						<field name="gender"/>
+						<field name="image"  widget="image" width="30"/>
+			    
+			    </tree>
+			</field>
+		</record>
+
+		<record id="student_kanban_view" model="ir.ui.view">
+			<field name="name">student.kanban</field>
+			<field name="model">student.master</field>
+			<field name="arch" type="xml">
+			    <kanban string="Student">
+			    	    <templates>
+                            <t t-name="kanban-box">
+
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_estudent_master_kanban">
+                            <div class="oe_kanban_details">
+                            <ul>
+                            <li><b>
+                                <field name="name"/>
+                            </b></li>
+                            <li>
+                                <field name="age"/>
+                            </li>
+                            <li>
+                                <field name="email" widget="email"/>
+                            </li>
+                            <li>
+                                <field name="dob"/>
+                            </li>
+                            <li>
+                                <field name="gender"/>
+                            </li>
+                            <li>
+                                <field name="image" widget="image" hieght="50" width="50"/>
+                            </li>
+                            
+                            </ul>
+                            </div>
+                            </div>
+                            </t>
+                        </templates>
+								
+			    </kanban>
+			</field>
+		</record>
+		
+		<record id="student_search_view" model="ir.ui.view">
+            <field name="name">student.master.select</field>
+            <field name="model">student.master</field>
+            <field name="arch" type="xml">
+                <search string="Search Student">
+                    <field name="name"/>
+                    <field name="email"/>
+                       <filter name="gender" domain="[('gender','=','male')]" string="Male"/>
+                       <filter name="gender" domain="[('gender','=','female')]" string="Female"/>
+                        <filter name="age" domain="[('age','>','21')]" string="Age"/>
+                    <group expand="0" name="group_by" string="Group By">
+                            <filter name="gender"   string ="Gender" context="{'group_by':'gender'}"/>
+                            <filter name="age" string="Age" context="{'group_by' : 'age'}"/>
+                    <!--<filter name="email" string="Email" context="{'group_by' : 'email'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+	    
+	    <record id="school_student_action" model="ir.actions.act_window">
+		    <field name="name">Student</field>
+			<field name="res_model">student.master</field>
+			<field name="view_mode">tree,form,kanban,search</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of students
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_school" name="School"/>
+		
+		<menuitem id="menu_school_student" name="Student Master" action="school_student_action" parent="menu_school" sequence="1"/>
+	</data>	
+</odoo>

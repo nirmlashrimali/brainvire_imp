@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	    <record id="line_form_view" model="ir.ui.view">
+			<field name="name">line.form</field>
+			<field name="model">patient.line</field>
+			<field name="arch" type="xml">
+			    <form string="Patient Line">
+	                <sheet>
+					    <group>
+						    <group>
+						        <field name="tablet_id"/>
+							    <field name="patient_id"/>
+							</group>
+					    </group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="line_tree_view" model="ir.ui.view">
+			<field name="name">line.tree</field>
+			<field name="model">patient.line</field>
+			<field name="arch" type="xml">
+			    <tree string="Patient Line">
+			       
+					   <field name="tablet_id"/>
+						<field name="patient_id"/>
+			    </tree>
+			</field>
+		</record>
+		<record id="patient_line_action" model="ir.actions.act_window">
+		    <field name="name">Patient Line</field>
+			<field name="res_model">patient.line</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of 
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_hospital" name="Hospital"/>
+		
+		<menuitem id="menu_line" name="Patient Line" action="patient_line_action" parent="menu_hospital"/>
+	</data>	
+</odoo>

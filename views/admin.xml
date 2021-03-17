@@ -1,0 +1,43 @@
+<odoo>
+	
+	    <record id="admin_form_view" model="ir.ui.view">
+			<field name="name">admin.form</field>
+			<field name="model">admin.admin</field>
+			<field name="arch" type="xml">
+			    <form string="Admin">
+	                <sheet>
+					    <group>
+						    <group string=" Details">
+						        <field name="name"/>
+							    <field name="age"/>
+							    <field name="address"/>
+							    <field name="html"/>
+							</group>
+						</group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+	    
+	    <record id="admin_tree_view" model="ir.ui.view">
+			<field name="name">admin.tree</field>
+			<field name="model">admin.admin</field>
+			<field name="arch" type="xml">
+			    <tree string="Admin">
+			       
+					   <field name="name"/>
+					   <field name="age"/>
+					   <field name="address"/> 
+					   <field name="html"/>                        
+			    </tree>
+			</field>
+		</record>
+		<record  model="ir.actions.act_window" id="admin_action">
+		    <field name="name">Admin</field>
+			<field name="res_model">admin.admin</field>
+			<field name="view_mode">tree,form</field>
+	    </record>
+	    <menuitem id="menu_admin" name="Admin" parent='menu_brainvire' />
+		
+		<menuitem id="menu_brainvire_admin" name="Admin" action="admin_action" parent="menu_admin" /> 
+</odoo>

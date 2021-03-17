@@ -1,0 +1,20 @@
+{
+    'name': 'Sale',
+    'summary': """This module will add a record to store product and brand details""",
+    'version': '10.0.1.0.0',
+    'description': """This module will add a record to store product and brand details""",
+    'author': 'Nirmla Shrimali',
+    'company': 'Super',
+    'website': 'https://www.super.com',
+    'category': 'Tools',
+    'depends': ['base','sale','product'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/brand_views.xml',
+        'views/product_product_views.xml',
+        'views/sale_order_views.xml',
+    ],
+    'demo': [],
+    'installable': True,
+    'auto_install': False,
+}

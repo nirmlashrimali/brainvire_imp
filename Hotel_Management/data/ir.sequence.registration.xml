@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <!-- Sequences for sale.order -->
+        <record id="seq_registration_order" model="ir.sequence">
+            <field name="name">Ragistration Order</field>
+            <field name="code">hotel.registration</field>
+            <field name="prefix">R</field>
+            <field name="padding">3</field>
+            <!-- <field name="number_next">1</field> -->
+        </record>
+
+</odoo>

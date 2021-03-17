@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	    <record id="patient_form_view" model="ir.ui.view">
+			<field name="name">patient.form</field>
+			<field name="model">patient.pat</field>
+			<field name="arch" type="xml">
+			    <form string="Patient">
+			    	<header>
+	                    <button string="Done" type="object" name="done_progressbar" states="draft" />
+	                    <field name="state" widget="statusbar"/>
+	                </header>
+	                <sheet>
+					    <group>
+						    <group string ="Personal details" col="4">
+						        <field name="name"/>
+							    <field name="age"/>
+							    <field name="gender"/>
+							    <field name="email" widget="email"/>
+							</group>
+						    <group string="Disease details" col="3">
+							    
+							    <field name="notes"/>
+							    <field name="issue_date"/>
+							    <field name="doctor_id"/>
+							    <field name="line_ids" widget="one2many_tags" attrs="{'invisible': 1}"/>
+							    <field name="doc_ids" widget="many2many_tags"/>
+							    </group>
+					        </group>
+					    <group>
+					    	<notebook>
+								<page string="Tablet">
+									<field name="line_ids">
+									   <tree editable="bottom">
+									        <field name="tablet_id"/>
+									        <field name="qty"/>
+									        <field name="price"/>
+									        <field name="total"/>
+									    </tree>
+									</field>
+								</page>
+							</notebook>
+						</group>
+						<group class="oe_subtotal_footer oe_right" colspan="2">
+							
+							<div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="grand_total" />
+                            </div>
+                                    <field name="grand_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary'/>
+                        </group>
+                        <group>
+                            <div class="oe_clear"/>
+						</group>
+				    </sheet>
+			    </form>
+			</field>
+		</record>
+        <record id="patient_tree_view" model="ir.ui.view">
+			<field name="name">patient.tree</field>
+			<field name="model">patient.pat</field>
+			<field name="arch" type="xml">
+			    <tree string="Patient">
+			       
+					    <field name="name"/>
+						<field name="age"/>
+						<field name="email"/>
+						<field name="notes"/>
+						<field name="gender"/>
+					    <field name="issue_date"/>
+					    <field name="state"/>
+					    <field name="doctor_id"/>
+					    <field name="line_ids" widget="one2many_tags" attrs="{'invisible': 1}"/>
+					    <field name="doc_ids" widget="many2many_tags"/>
+				</tree>
+			</field>
+		</record>
+		<record id="patient_search_view" model="ir.ui.view">
+            <field name="name">patient.search</field>
+            <field name="model">patient.pat</field>
+            <field name="arch" type="xml">
+                <search string="Search Patient">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <filter name="state" domain="[('state','=','done')]" string="Done"/>
+                    <filter name="state" domain="[('state','=','draft')]" string="Draft"/>
+                    <group expand="0" name="group_by" string="Group By">
+                        <filter name="gender" string="Gender" domain="[]" context="{'group_by' : 'gender'}"/>
+                        <filter name="age" string="Age" context="{'group_by' : 'age'}"/>
+                    <!--    <filter name="email" string="Email" context="{'group_by' : 'email'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+	    <record id="hospital_patient_action" model="ir.actions.act_window">
+		    <field name="name">Patient</field>
+			<field name="res_model">patient.pat</field>
+			<field name="view_mode">tree,form,search</field>
+			<field name="help" type="html">
+			    <p class="o_view_nocontent_smiling_face">Enter details of 
+                </p>
+			</field>
+	    </record>
+       
+
+		<menuitem id="menu_hospital" name="Hospital"/>
+		
+		<menuitem id="menu_patient" name="Patient" action="hospital_patient_action" parent="menu_hospital" sequence="2"/>
+</odoo>    
+	    

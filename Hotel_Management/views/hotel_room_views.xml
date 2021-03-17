@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+      <record id="room_form_view" model="ir.ui.view">
+      <field name="name">room.form</field>
+      <field name="model">hotel.room</field>
+      <field name="arch" type="xml">
+          <form string="Hotel Room">
+              <header>
+                <button string="Allocated" type="object" name="allocated_progressbar" />
+                <field name="room_state" widget="statusbar"/>
+              </header>
+                  <sheet>
+              <group>
+                <group>
+                    <field name="room_no"/>
+                    <field name="room_type_id"/>
+                    <field name="floor"/>
+                    <field name="room_size"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+      </field>
+    </record>
+      
+      <record id="room_tree_view" model="ir.ui.view">
+      <field name="name">room.tree</field>
+      <field name="model">hotel.room</field>
+      <field name="arch" type="xml">
+          <tree string="Hotel Room">
+            <field name="room_no"/>
+            <field name="room_type_id"/>
+            <field name="floor"/>
+            <field name="room_size"/>
+            <field name="room_state"/>
+            <field name="date_from"/>
+            <field name="date_to"/>
+          </tree>
+      </field>
+    </record>
+    <record id="hotel_room_action" model="ir.actions.act_window">
+      <field name="name">Hotel Room</field>
+      <field name="res_model">hotel.room</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">Enter details of Customers and Room
+                </p>
+      </field>
+      </record>
+       
+
+    <menuitem id="menu_hotel" name="Hotel"/>
+    
+    <menuitem id="menu_room" name="Hotel Room" parent="menu_hotel"/>
+    <menuitem id="menu_room1" name="Room" action="hotel_room_action" parent="menu_room" sequence="1"/>
+  </data> 
+</odoo>
