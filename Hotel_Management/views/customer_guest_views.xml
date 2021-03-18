@@ -11,7 +11,7 @@
                 <group>
                     <field name="name"/>
                     <field name="age"/>
-                    <field name="register_id"/>
+                    <!-- <field name="register_id"/> -->
                     
                 </group>
               </group>
@@ -27,7 +27,7 @@
           <tree string="Hotel Customer Guest">
                 <field name="name"/>
                 <field name="age"/>
-                <field name="register_id"/>
+                <!-- <field name="register_id"/> -->
           </tree>
       </field>
     </record>

@@ -9,8 +9,8 @@
               <header>
                     <button string="Done" type="object" name="done_progressbar" states="draft" />
                     <button string="Process" type="object" name="process_progressbar"/>
+                    <button string="Cancel" type="object" name="cancel_progressbar"/>
                     <field name="state" widget="statusbar"/>
-                    <button name="%(customer_inquiry_action)d" string="Inquiry" type="action" class="oe_highlight"/>
               </header>
                   <sheet>
               <group>
@@ -19,32 +19,38 @@
                     <field name="register_no"/>
                     <field name="phone"/>
                     <field name="dob"/>
-                    <field name="room_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="create_date"/>
+                    <!--  <field name="room_id"/> -->
                 </group>
-                <group>
+              <group>
                 <notebook>
                     <page string="Documents">
-                  <field name="doc_ids">
+                  <field name="doc_ids" widget="many2many">
                      <tree editable="bottom">
                           <field name="name"/>
                           <field name="date"/>
                           <field name="doc"/>
-                          <field name="registration_id"/>
+                          <!-- <field name="registration_id"/> -->
                          
                       </tree>
                   </field>
                 </page>
-                    <page string="Guests">
-                  <field name="guest_ids">
-                     <tree editable="bottom">
-                          <field name="name"/>
-                          <field name="age"/>
-                          <field name="register_id"/>
-                      </tree>
-                  </field>
+                  <page string="Guest Lines">
+                    <group>
+                      <field name="line_ids">
+                    <tree editable="bottom">
+                      <field name="room_id" domain="[('book_room', '=', 'True')]"/>
+                      <field name="guest_ids" widget="many2many_tags"/>
+                    </tree>
+                      </field>
+                    </group>
                   </page>
-      
-              </notebook>
+                  <!-- <page string="Room">
+                   <field name="room_id"/>
+                  </page> -->
+                </notebook>
               </group>
             </group>
             </sheet>
@@ -62,12 +68,13 @@
                     <field name="register_no"/>
                     <field name="phone"/>
                     <field name="dob"/>
-                    <field name="doc_ids" widget="one2many_tags"/>
-                    <field name="guest_ids" widget="one2many_tags"/>
-                   <!--  <field name="room_ids" widget="many2many_tags"/> -->
+                    <field name="doc_ids" widget="many2many_tags"/>
+                    <field name="line_ids" widget="many2many_tags"/>
                     <field name="state"/>
-                    <field name="room_id"/>
-
+                  <!--   <field name="room_id"/> -->
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="create_date"/>
           </tree>
       </field>
     </record>
@@ -86,8 +93,7 @@
     
     <menuitem id="menu_registration" name="Hotel Registration" parent="menu_hotel"/>
      <menuitem id="menu_registration1" name="Registration" action="hotel_registration_action" parent="menu_registration" sequence="2"/>
-     <!-- <menuitem id="menu_room1" name="Room" action="hotel_room_action" parent="menu_room" sequence="1"/> --> 
-     <menuitem id="menu_inquiry" name="Inquiry" action="customer_inquiry_action" parent="menu_registration" sequence="1"/> 
- 
+    <!-- <menuitem id="menu_inquiry" name="Inquiry" action="customer_inquiry_action" parent="menu_registration" sequence="1"/>  -->
+
   </data> 
 </odoo>

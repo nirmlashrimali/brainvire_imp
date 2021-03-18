@@ -17,8 +17,10 @@
                     <field name="room_type_id"/>
                     <field name="floor"/>
                     <field name="room_size"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <!-- <field name="date_from"/>
+                    <field name="date_to"/> -->
+                    <field name="inquiry_id"/>
+                    <field name="book_room"/>
                 </group>
               </group>
             </sheet>
@@ -36,8 +38,10 @@
             <field name="floor"/>
             <field name="room_size"/>
             <field name="room_state"/>
-            <field name="date_from"/>
-            <field name="date_to"/>
+            <!-- <field name="date_from"/>
+            <field name="date_to"/> -->
+            <field name="inquiry_id"/>
+            <field name="book_room"/>
           </tree>
       </field>
     </record>

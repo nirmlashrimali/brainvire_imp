@@ -8,11 +8,12 @@
     'company': 'Taj Hotel',
     'website': 'https://www.tajhotel.com',
     'category': 'Tools',
-    'depends': ['base'],
+    'depends': ['base','mail'],
     'data': [
         'security/ir.model.access.csv',
-        'wizards/hotel_inquiry_views.xml',
-        #'wizards/room_inquiry_views.xml',
+        'data/register_cron_data.xml',
+        'report/report_register.xml',
+        'report/report_register_templates.xml',
         'data/ir.sequence.room.xml',
         'data/ir.sequence.registration.xml',
         'views/hotel_room_views.xml',
@@ -20,7 +21,9 @@
         'views/register_document_views.xml',
         'views/customer_guest_views.xml',
         'views/hotel_room_type_views.xml',
-
+        'views/hotel_inquiry_views.xml',
+        'views/room_guest_line_views.xml',
+        
     ],
     'demo': [],
     'installable': True,

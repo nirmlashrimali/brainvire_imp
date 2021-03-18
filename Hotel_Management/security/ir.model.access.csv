@@ -5,3 +5,4 @@ access_register_document,access_register_document,Hotel_Management.model_registe
 access_customer_guest,access_customer_guest,Hotel_Management.model_customer_guest,base.group_user,1,1,1,1
 access_room_type,access_room_type,Hotel_Management.model_room_type,base.group_user,1,1,1,1
 access_hotel_inquiry,access_hotel_inquiry,Hotel_Management.model_hotel_inquiry,base.group_user,1,1,1,1
+access_room_guest_line,access_room_guest_line,Hotel_Management.model_room_guest_line,base.group_user,1,1,1,1
