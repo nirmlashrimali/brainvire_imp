@@ -18,7 +18,7 @@ class HotelRoom(models.Model):
     # date_to=fields.Date('End Date')
     inquiry_id=fields.Many2one('hotel.inquiry','Inquiry')
     book_room=fields.Boolean('Room Book')
-
+    price=fields.Integer('Room Price')
     room_state = fields.Selection([
             ('draft', 'Draft'),
             ('allocated', 'Allocated')
@@ -42,7 +42,9 @@ class HotelRegistration(models.Model):
     _name='hotel.registration'
     _rec_name='name'
 
-    name=fields.Many2one('res.partner')
+    # name=fields.Many2one('res.partner')
+    name=fields.Char('Name')
+
     register_no=fields.Char('Regsiter Number',readonly=True, required=True, index=True, default='New')
     phone=fields.Integer('Contact Number')
     dob=fields.Date('Birth Date')
@@ -75,12 +77,12 @@ class HotelRegistration(models.Model):
 
 
 
-    # @api.model
-    # def create(self, vals):
-    #     if vals.get('register_no', 'New') == 'New':
-    #         vals['register_no'] = self.env['ir.sequence'].next_by_code('hotel.registration') or 'New'
-    #     result = super(HotelRegistration, self).create(vals)
-    #     return result
+    @api.model
+    def create(self, vals):
+        if vals.get('register_no', 'New') == 'New':
+            vals['register_no'] = self.env['ir.sequence'].next_by_code('hotel.registration') or 'New'
+        result = super(HotelRegistration, self).create(vals)
+        return result
     
     @api.model
     def _registration_cancel(self):
@@ -124,12 +126,12 @@ class HotelInquiry(models.Model):
     _description='Inquiry about Hotel and Rooms Avaibility'
     _rec_name='customer'
 
-    customer=fields.Many2one('res.partner','Customer',required=True)
+    customer=fields.Many2one('res.partner',string='Customer',required=True)
     start_date=fields.Date('Start Date')
     end_date=fields.Date('End Date')
     room_types=fields.Many2one('room.type','Room Type')
     room_size_id=fields.Integer('Room Size')
-    room_ids=fields.One2many('hotel.room','inquiry_id',string='Room')
+    room_ids =fields.One2many('hotel.room','inquiry_id',string='Room')
 
     def search_room_available(self):
         check_room=self.env['hotel.room'].search([('room_state','=','draft'),('room_type_id','=',self.room_types.id),('room_size','>=',self.room_size_id)])
@@ -148,11 +150,26 @@ class HotelInquiry(models.Model):
     def get_record(self):
         records=self.env['hotel.inquiry'].browse('active_ids')
         print("---------->",records)
+
+        res =[]
+        for i in self:
+            for j in i.room_ids:
+                if j.book_room:
+                    res.append({'room_id':j.id})
+                    print("----------->",res)
+
+        contexts={
+        # 'default_room_id':rooms,
+        'default_line_ids':res,
+        'default_name':self.customer.name,
+        'default_date_from':self.start_date,
+        'default_date_to':self.end_date
+        }
         if records:
             return{
             'res_model':'hotel.registration',
             'type': 'ir.actions.act_window',
-            'context': {},
+            'context': contexts,
             'view_mode': 'form',
             'view_type': 'form',
             'view_id': self.env.ref("Hotel_Management.registration_form_view").id,
@@ -162,8 +179,9 @@ class HotelInquiry(models.Model):
 class RoomGuestLine(models.Model):
     _name='room.guest.line'
     _description='Inquiry about customer and their guests Avaibility'
-
+    _rec_name='room_id'
 
     room_id=fields.Many2one("hotel.room",'Room')
     guest_ids=fields.Many2many('customer.guest',string='Guests')
     reg_id=fields.Many2one('hotel.registration','Register Id')
+    rate=fields.Integer('Price')

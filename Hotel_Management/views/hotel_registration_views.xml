@@ -42,6 +42,7 @@
                       <field name="line_ids">
                     <tree editable="bottom">
                       <field name="room_id" domain="[('book_room', '=', 'True')]"/>
+                      <field name="rate"/>
                       <field name="guest_ids" widget="many2many_tags"/>
                     </tree>
                       </field>

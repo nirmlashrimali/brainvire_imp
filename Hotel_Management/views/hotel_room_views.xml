@@ -21,6 +21,7 @@
                     <field name="date_to"/> -->
                     <field name="inquiry_id"/>
                     <field name="book_room"/>
+                    <field name="price"/>
                 </group>
               </group>
             </sheet>
@@ -42,6 +43,7 @@
             <field name="date_to"/> -->
             <field name="inquiry_id"/>
             <field name="book_room"/>
+            <field name="price"/>
           </tree>
       </field>
     </record>

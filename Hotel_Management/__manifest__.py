@@ -23,6 +23,7 @@
         'views/hotel_room_type_views.xml',
         'views/hotel_inquiry_views.xml',
         'views/room_guest_line_views.xml',
+
         
     ],
     'demo': [],

@@ -1,22 +1,60 @@
 <odoo>
-    <template id="report_registration">
-        <t t-call="web.html_container">
+<template id="report_registration">
+    <t t-call="web.html_container">
         <t t-foreach="docs" t-as="doc">
-        <t t-call="web.external_layout">
-        <div class="page">
-        <div class="oe_structure"/>
-        <h2>name: <span t-field="doc.name"/></h2>
-        <br/><br/>
-        <h4>
-        <div class="row mt32 mb32">
-        <div class="col-3">
-        <strong>State:</strong>
-        </div><br/><br/><br/>
-        </div>
-        </h4>
-        </div>
+            <div class="header">
+                    <div class="text-center">
+                        <h1><strong>Nirmla Shrimali</strong></h1>
+                    </div>                    
+            </div>
+            
+            <t t-call="web.external_layout">
+                <div class="footer">
+                    <div class="text-center">
+                        <h3><strong>Nirmla Shrimali</strong></h3>
+                    </div>                    
+                </div>
+                
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <h2>name:
+                        <span t-field="doc.name"/>
+                    </h2>
+                    <br/>
+                    <br/>
+                    <h2>Register No:
+                        <span t-field="doc.register_no"/>
+                    </h2>
+                    <br/>
+                    <br/>
+                    <h2>Contact:
+                        <span t-field="doc.phone"/>
+                    </h2>
+                    <br/>
+                    <br/>
+                    <h4>
+                        <div class="row mt32 mb32">
+                            <div class="col-3">
+                                <strong>State:</strong>
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </div>
+                    </h4>
+                    <h4>
+                        <div class="row mt32 mb32">
+                            <div class="col-3">
+                                <strong>Birth Date:</strong>
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </div>
+                    </h4>
+                </div>
+            </t>
         </t>
-        </t>
-        </t>
-    </template>
+    </t>
+</template>
 </odoo>
