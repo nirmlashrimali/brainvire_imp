@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inquiry_form_view" model="ir.ui.view">
+            <field name="name">inquiry.form</field>
+            <field name="model">hotel.inquiry</field>
+            <field name="arch" type="xml">
+                <form string="Hotel Customer Inquiry">
+                    <header>
+                        <button name="search_room_available" string="Search" type="object" class="oe_highlight"/>
+                        <button name="get_record" string="Submit" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="customer"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="room_types"/>
+                                <field name="room_size_id"/>
+                            </group>
+                                <notebook>
+                                    <page string="Rooms">
+                                        <field name="room_ids" widget="many2many">
+                                            <tree editable="bottom">
+                                                <field name="room_no"/>
+                                                <field name="book_room" widget="boolean_toggle"/>
+                                                <field name="price"/>
+                                            </tree>
+                                        </field>
+                                    </page>
+                                </notebook>
+                        </group>
+                            <group class="oe_subtotal_footer oe_right" colspan="2">
+
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="total_price"/>
+                                </div>
+                                <field name="total_price" id="total_price" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary'/>
+                            </group>
+                            <group>
+                            <div class="oe_clear"/>
+                            </group>
+                        <!-- </group> -->
+                    </sheet>
+                    <!--  <footer>
+                       <button name="search_room_available" string="Search" type="object" class="oe_highlight"/>
+                       <button string="Cancel" class="btn btn-default" special="cancel"/>
+                     </footer> -->
+                </form>
+            </field>
+        </record>
+        <record id="inquiry_tree_view" model="ir.ui.view">
+            <field name="name">inquiry.tree</field>
+            <field name="model">hotel.inquiry</field>
+            <field name="arch" type="xml">
+                <tree string="Hotel Customer Inquiry">
+                    <field name="customer"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="room_types"/>
+                    <field name="room_size_id"/>
+                    <field name="room_ids" widget="many2many_tags"/>
+
+
+                </tree>
+            </field>
+        </record>
+        <record id="customer_inquiry_action" model="ir.actions.act_window">
+            <field name="name">Hotel Customer Inquiry</field>
+            <field name="res_model">hotel.inquiry</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Enter details of Rooms Availability
+                </p>
+            </field>
+        </record>
+        <menuitem id="menu_inquiry" name="Inquiry" action="customer_inquiry_action" parent="menu_registration"
+                  sequence="1"/>
+
+        <!-- <menuitem id="menu_hotel" name="Hotel"/> -->
+
+        <!--  <menuitem id="menu_room_type" name="Hotel Room Type" action="hotel_room_type_action" parent="menu_room" sequence="2"/> -->
+
+
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="line_form_view" model="ir.ui.view">
+            <field name="name">line.form</field>
+            <field name="model">room.guest.line</field>
+            <field name="arch" type="xml">
+                <form string="Room Customer Guest Line">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="room_id"/>
+                                <!--    <field name="guest_ids"/> -->
+                                <field name="reg_id"/>
+<!--                                 <field name="rate"/>
+ -->                                <notebook>
+                                    <page string="Guests">
+                                        <field name="guest_ids" widget="many2many">
+                                            <tree editable="bottom">
+                                                <!-- <field name="name"/> -->
+                                                
+                                                <!-- <field name="age"/> -->
+                                            </tree>
+                                        </field>
+                                    </page>
+                                </notebook>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="line_tree_view" model="ir.ui.view">
+            <field name="name">line.tree</field>
+            <field name="model">room.guest.line</field>
+            <field name="arch" type="xml">
+                <tree string="Room Customer Guest Line">
+                    <field name="room_id"/>
+                    <field name="guest_ids"/>
+                    <field name="reg_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="room_guest_line_action" model="ir.actions.act_window">
+            <field name="name">Room Customer Guest Line</field>
+            <field name="res_model">room.guest.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Enter details of Customer's Guest
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_hotel" name="Hotel"/>
+
+        <menuitem id="menu_customer_guest_line" name="Room Customer Guest Line" action="room_guest_line_action"
+                  parent="menu_hotel"/>
+    </data>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="guest_form_view" model="ir.ui.view">
+            <field name="name">guest.form</field>
+            <field name="model">customer.guest</field>
+            <field name="arch" type="xml">
+                <form string="Hotel Customer Guest">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="age"/>
+                                <!-- <field name="register_id"/> -->
+
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="guest_tree_view" model="ir.ui.view">
+            <field name="name">guest.tree</field>
+            <field name="model">customer.guest</field>
+            <field name="arch" type="xml">
+                <tree string="Hotel Customer Guest">
+                    <field name="name"/>
+                    <field name="age"/>
+                    <!-- <field name="register_id"/> -->
+                </tree>
+            </field>
+        </record>
+        <record id="customer_guest_action" model="ir.actions.act_window">
+            <field name="name">Hotel Customer Guest</field>
+            <field name="res_model">customer.guest</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Enter details of Customer's Guest
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_hotel" name="Hotel"/>
+
+        <menuitem id="menu_customer_guest" name="Hotel Customer Guest" action="customer_guest_action"
+                  parent="menu_hotel"/>
+    </data>
+</odoo>
