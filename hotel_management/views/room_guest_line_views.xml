@@ -12,13 +12,14 @@
                                 <field name="room_id"/>
                                 <!--    <field name="guest_ids"/> -->
                                 <field name="reg_id"/>
-<!--                                 <field name="rate"/>
- -->                                <notebook>
+                                <!--                                 <field name="rate"/>
+                                 -->
+                                <notebook>
                                     <page string="Guests">
                                         <field name="guest_ids" widget="many2many">
                                             <tree editable="bottom">
                                                 <!-- <field name="name"/> -->
-                                                
+
                                                 <!-- <field name="age"/> -->
                                             </tree>
                                         </field>

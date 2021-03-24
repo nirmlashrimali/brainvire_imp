@@ -23,47 +23,46 @@
                                 <!--   <field name="email"/> -->
                                 <field name="date_from"/>
                                 <field name="date_to"/>
-
-                                <!-- <field name="create_date"/> -->
-                                <!--  <field name="room_id"/> -->
-                            </group>
-                            <group>
-                                <notebook>
-                                    <page string="Documents">
-                                        <field name="doc_ids" widget="many2many">
-                                            <tree editable="bottom">
-                                                <field name="name"/>
-                                                <field name="date"/>
-                                                <field name="doc"/>
-                                                <!-- <field name="registration_id"/> -->
-
-                                            </tree>
-                                        </field>
-                                    </page>
-                                    <page string="Guest Lines">
-                                        <group>
-                                            <field name="line_ids">
-                                                <tree editable="bottom">
-                                                    <field name="room_id" domain="[('book_room', '=', 'True')]"/>
-                                                  <!--   <field name="rate"/> -->
-                                                    <field name="guest_ids" widget="many2many_tags"/>
-                                                </tree>
-                                            </field>
-                                        </group>
-                                    </page>
-                                </notebook>
-                            </group>
-                            <group class="oe_subtotal_footer oe_right" colspan="2">
-
-                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
-                                    <label for="total"/>
-                                </div>
-                                <field name="total" id="total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary'/>
-                            </group>
-                            <group>
-                            <div class="oe_clear"/>
                             </group>
                         </group>
+                        <!-- <group> -->
+                        <notebook>
+                            <page string="Documents">
+                                <field name="doc_ids" widget="many2many">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="doc"/>
+                                        <!-- <field name="registration_id"/> -->
+
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Guest Lines">
+                                <group>
+                                    <field name="line_ids">
+                                        <tree editable="bottom">
+                                            <field name="room_id" domain="[('book_room', '=', 'True')]"/>
+                                            <!--   <field name="rate"/> -->
+                                            <field name="guest_ids" widget="many2many_tags"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                        <!--  </group> -->
+                        <group class="oe_subtotal_footer oe_right" colspan="2">
+
+                            <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                <label for="total"/>
+                            </div>
+                            <field name="total" id="total" nolabel="1" class="oe_subtotal_footer_separator"
+                                   widget='monetary'/>
+                        </group>
+                        <group>
+                            <div class="oe_clear"/>
+                        </group>
+                        <!--  </group> -->
                     </sheet>
                 </form>
             </field>

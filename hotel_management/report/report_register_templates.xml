@@ -7,7 +7,9 @@
                 <div class="header">
                     <div class="text-center">
                         <h1>
-                            <strong>Nirmla Shrimali</strong>
+                            <strong>
+                                <span t-field="doc.name"/>
+                            </strong>
                         </h1>
                     </div>
                 </div>

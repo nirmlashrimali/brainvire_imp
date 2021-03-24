@@ -2,6 +2,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from datetime import date, timedelta
+import xlsxwriter
+import io
+import base64
+import openpyxl
+from pathlib import Path
 
 
 class HotelRoom(models.Model):
@@ -13,8 +18,6 @@ class HotelRoom(models.Model):
     room_type_id = fields.Many2one('room.type', string='Room Type Id')
     floor = fields.Selection([('one', '1'), ('two', '2'), ('three', '3')], string='Floor')
     room_size = fields.Integer('Room Size')
-    # date_from=fields.Date('Start Date')
-    # date_to=fields.Date('End Date')
     inquiry_id = fields.Many2one('hotel.inquiry', 'Inquiry')
     book_room = fields.Boolean('Room Book')
     price = fields.Integer('Price')
@@ -34,31 +37,48 @@ class HotelRoom(models.Model):
         result = super(HotelRoom, self).create(vals)
         return result
 
+    def get_registration(self):
+        print("----->\n\n\n\n\n")
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Registration',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'hotel.registration',
+            'domain': [('line_ids.room_id', '=', self.id)],
+        }
+
+    def get_inquiry(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Inquiry',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'hotel.inquiry',
+            # 'domain': [('line_ids.room_id', '=', self.id)],
+        }
+
 
 class HotelRegistration(models.Model):
     _name = 'hotel.registration'
     _rec_name = 'name'
 
-    # name=fields.Many2one('res.partner')
     name = fields.Char('Name')
-
-    register_no = fields.Char('Regsiter Number', readonly=True, required=True, index=True, default='New')
+    register_no = fields.Char('Register Number', readonly=True, required=True, index=True, default='New')
     phone = fields.Integer('Contact Number')
     dob = fields.Date('Birth Date')
-    # email=fields.Char('Email')
     doc_ids = fields.One2many('register.document', 'registration_id', string='Documents', required=True)
-    # room_id=fields.Many2one('hotel.room','Rooms')
     date_from = fields.Date('Start Date')
     date_to = fields.Date('End Date')
-    total  = fields.Float('Total',readonly=1)
-    # create_date=fields.Date(default=date.today())
+    total = fields.Float('Total')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('process', 'Process'),
         ('done', 'Done'),
         ('cancel', 'Cancel')
     ], default='draft')
-    # line_ids=fields.One2many('room.guest.line.','reg_id',string='Room Customer Guests')
     line_ids = fields.One2many('room.guest.line', 'reg_id', string='Room Customer Guest')
 
     def done_progressbar(self):
@@ -130,7 +150,6 @@ class HotelRegistration(models.Model):
                 print("\n\n\n\n\n\n\n\n--")
 
 
-    
 class RegisterDocument(models.Model):
     _name = 'register.document'
 
@@ -138,14 +157,6 @@ class RegisterDocument(models.Model):
     date = fields.Date('Date')
     doc = fields.Binary('Document', required=True)
     registration_id = fields.Many2one('hotel.registration', string='Registration Id')
-
-
-# class CustomerGuest(models.Model):
-#     _name = 'customer.guest'
-
-#     name = fields.Char('Guest Name')
-#     age = fields.Integer('Guest Age')
-#     # register_id=fields.Many2one('hotel.registration','Register Id')
 
 
 class RoomType(models.Model):
@@ -166,20 +177,17 @@ class HotelInquiry(models.Model):
     room_types = fields.Many2one('room.type', 'Room Type')
     room_size_id = fields.Integer('Room Size')
     room_ids = fields.One2many('hotel.room', 'inquiry_id', string='Room')
-    total_price=fields.Integer('Total Price',compute='compute_price')
+    total_price = fields.Integer('Total Price', compute='compute_price')
 
-    
     @api.onchange('room_ids')
     def compute_price(self):
-         total=0
-         for record in self.room_ids:
-            if  record.book_room:
-                total+=record.price
-         self.write({
-            'total_price':total
-            })
-            
-
+        total = 0
+        for record in self.room_ids:
+            if record.book_room:
+                total += record.price
+        self.write({
+            'total_price': total
+        })
 
     def search_room_available(self):
         check_room = self.env['hotel.room'].search(
@@ -209,14 +217,14 @@ class HotelInquiry(models.Model):
                     print("----------->", res)
 
         contexts = {
-            # 'default_room_id':rooms,
+
             'default_line_ids': res,
             'default_name': self.customer.name,
             'default_date_from': self.start_date,
             'default_date_to': self.end_date,
-            'default_total':self.total_price
+            'default_total': self.total_price
         }
-        
+
         if records:
             return {
                 'res_model': 'hotel.registration',
@@ -239,8 +247,6 @@ class RoomGuestLine(models.Model):
     reg_id = fields.Many2one('hotel.registration', 'Register Id')
 
 
-
-
 class Registration(models.AbstractModel):
     _name = 'report.hotel_management.report_registration'
     _description = 'get values data'
@@ -260,3 +266,79 @@ class Registration(models.AbstractModel):
             'data': data,
             'get_method': self._get_method,
         }
+
+
+class RegistrationReport(models.TransientModel):
+    _name = 'registration.report'
+    _description = 'Registration Xls Report'
+
+    start_date = fields.Date('Start Date')
+    end_date = fields.Date('End Date')
+
+    def generate_xlsx_report(self):
+        print("------------>", self)
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+        cell_format = workbook.add_format()
+        number_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+        cell_format.set_align('center')
+        cell_format.set_align('vcenter')
+        cell_format = workbook.add_format({'bold': True, 'font_color': 'black','bg_color': 'red'})
+        cell_format.set_italic()
+        cell_format.set_underline()
+        worksheet.write(0, 1, "Start Date", cell_format)
+        worksheet.write(0, 2, "End Date", cell_format)
+        worksheet.write(0, 3, "Register Number", cell_format)
+        worksheet.write(0, 4, "Customer", cell_format)
+        worksheet.write(0, 5, "Date of Birth", cell_format)
+        worksheet.write(0, 6, "Total", cell_format)
+
+
+        worksheet.set_row(0, 20)
+        worksheet.set_column('B:K', 20)
+
+        row = 1
+        col = 1
+
+        # Iterate over the data and write it out row by row.
+        records = self.env['hotel.registration'].search([
+            ('date_from', '>=', self.start_date),
+            ('date_to', '<=', self.end_date)
+        ])
+        print("-------records------>", records)
+
+        for rec in records:
+            worksheet.write(row, col, rec.date_from, number_format)
+            print("-----start date----->", rec.date_from)
+            worksheet.write(row, col + 1, rec.date_to, number_format)
+            worksheet.write(row, col + 2, rec.register_no)
+            worksheet.write(row, col + 3, rec.name)
+            worksheet.write(row, col + 4, rec.dob, number_format)
+            worksheet.write(row, col + 5, rec.total, number_format)
+
+            row += 1
+        workbook.close()
+
+        output.seek(0)
+        attch = self.env['ir.attachment'].create(
+            {'name': 'Registrations.xlsx', 'datas': base64.b64encode(output.read())})
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/' + str(attch.id) + '?download=True',
+            'target': self
+        }
+
+
+class ImportRoom(models.TransientModel):
+    _name = 'import.room'
+
+    file=fields.Binary(string='Upload File')
+
+
+    def get_room_data(self):
+        pass
+        
+        # web=xlrd.open_workbook()
+
+    

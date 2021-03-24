@@ -5,20 +5,28 @@
             <field name="name">room.form</field>
             <field name="model">hotel.room</field>
             <field name="arch" type="xml">
+
                 <form string="Hotel Room">
                     <header>
                         <button string="Allocated" type="object" name="allocated_progressbar"/>
                         <field name="room_state" widget="statusbar"/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" string="Registration" type="object" name="get_registration"
+                                    icon="fa-edit" widget="statinfo">
+                            </button>
+                            <button class="oe_stat_button" string="Inquiry" type="object" name="get_inquiry"
+                                    icon="fa-book" widget="statinfo">
+                            </button>
+                        </div>
+                        
                         <group>
                             <group>
                                 <field name="room_no"/>
                                 <field name="room_type_id"/>
                                 <field name="floor"/>
                                 <field name="room_size"/>
-                                <!-- <field name="date_from"/>
-                                <field name="date_to"/> -->
                                 <field name="inquiry_id"/>
                                 <field name="book_room"/>
                                 <field name="price"/>
@@ -39,8 +47,6 @@
                     <field name="floor"/>
                     <field name="room_size"/>
                     <field name="room_state"/>
-                    <!-- <field name="date_from"/>
-                    <field name="date_to"/> -->
                     <field name="inquiry_id"/>
                     <field name="book_room"/>
                     <field name="price"/>
