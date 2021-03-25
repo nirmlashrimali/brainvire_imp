@@ -8,7 +8,7 @@
     'company': 'Brainvire Infotech',
     'website': 'https://www.brainvireinfotech.com',
     'category': 'Tools',
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail','sale'],
     'data': [
         'security/ir.model.access.csv',
         'data/register_cron_data.xml',
@@ -25,6 +25,8 @@
         'data/ir_send_email.xml',
         'views/registration_xls_report_views.xml',
         'views/import_room_wizard_views.xml',
+        'views/sale_order_views.xml',
+        'views/import_line_wizard_views.xml',
 
     ],
     'demo': [],

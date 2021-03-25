@@ -7,3 +7,4 @@ access_hotel_inquiry,access_hotel_inquiry,hotel_management.model_hotel_inquiry,b
 access_room_guest_line,access_room_guest_line,hotel_management.model_room_guest_line,base.group_user,1,1,1,1
 access_registration_report,access_registration_report,hotel_management.model_registration_report,base.group_user,1,1,1,1
 access_import_room,access_import_room,hotel_management.model_import_room,base.group_user,1,1,1,1
+access_import_line,access_import_line,hotel_management.model_import_line,base.group_user,1,1,1,1
