@@ -387,24 +387,23 @@ class ImportLine(models.TransientModel):
 		print(self.document)
 		ab= xlrd.open_workbook(file_contents=base64.decodebytes(self.document))
 		for sheet in ab.sheets():
-			for row in range(sheet.nrows):
-				if row!=0:
-				  
-					order_id = sheet.cell(row, 0).value
-					product_id=sheet.cell(row,1).value
-					name=sheet.cell(row,2).value
-					product_uom_qty= sheet.cell(row, 3).value
-					price_unit= sheet.cell(row, 4).value
-					ab_id=self.env['sale.order'].search([('id','=',self.id)])
-					print("----->",ab_id)
-					self.env['sale.order.line'].create({
-						
-						'product_id':int(product_id),
-						'order_id':int(ab_id),
-						'name':str(name),
-						'product_uom_qty': float(product_uom_qty),
-						'price_unit': float(price_unit),
-					   
-					})
+			for row in range(1,sheet.nrows):
+				product_name=sheet.cell(row,0).value
+				desc=sheet.cell(row,1).value
+				active = self.env.context.get('active_id')
+				exist =  self.env['product.product'].search([(
+					'name','=',product_name
+					)], limit=1)
+				if len(exist.ids)>=1:
+					product = exist.id
 				else:
-					print("---\n\n\n\n\\n\n\n\n---")
+					product = self.env['product.product'].create({
+					'name':str(product_name)
+					}).id
+
+				self.env['sale.order.line'].create({
+					"order_id":active,
+					"product_id":product,
+					"name":desc
+					})
+				 
