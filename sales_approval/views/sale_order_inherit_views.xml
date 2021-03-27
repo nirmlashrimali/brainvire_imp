@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="sale_view_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <button name="action_cancel" position="before">
+                <button name="get_approve" string="Approve" type="object" attrs="{'invisible': ['|', ('state', 'not in', ['sale', 'to_approve']),
+            ('state', '=', 'sale')]}" groups="sales_approval.sale_manager_id"/>
+            </button>
+            <field name="state" position="attributes">
+                <attribute name="statusbar_visible">draft,to_approve,sent,invoiced,done</attribute>
+            </field>
+            
+        </field>
+    </record>
+</odoo>

@@ -11,8 +11,10 @@
     'depends': ['base','sale'],
     'data': [
         'security/ir.model.access.csv',
+        'security/sales_manager_group_security.xml',
         'views/res_config_inherit_views.xml',
-        
+        'views/sale_order_inherit_views.xml',
+        'views/sales_approval_views.xml',
     ],
     'demo': [],
     'installable': True,
