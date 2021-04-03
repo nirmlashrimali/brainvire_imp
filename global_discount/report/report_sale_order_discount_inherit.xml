@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id ="sale_report_inherit"  inherit_id="sale.report_saleorder_document">
+		<xpath expr="///tr[@class='border-black o_total']" position="before">
+			<tr class="border-black o_subtotal" style="">
+                    <td name="td_global_discount"><strong>Global Discount</strong></td>
+                    <td name="td_global_discount" class="text-right">
+                        <span t-field="doc.global_discount"/>
+                    </td>
+	        </tr>
+	    </xpath>
+    </template>
+</odoo>
