@@ -20,7 +20,7 @@
                                     icon="fa-book" widget="statinfo">
                             </button>
                         </div>
-                        
+
                         <group>
                             <group>
                                 <field name="room_no"/>
@@ -53,10 +53,21 @@
                 </tree>
             </field>
         </record>
+        <record id="room_pivot_view" model="ir.ui.view">
+           <field name="name">room.pivot</field>
+           <field name="model">hotel.room</field>
+           <field name="arch" type="xml">
+               <pivot string="Room">
+                   <field name="room_type_id" type="row"/>
+                   <!-- <field name="room_state" type="col"/>
+                   <field name="room_size"/> -->
+               </pivot>
+           </field>
+        </record>
         <record id="hotel_room_action" model="ir.actions.act_window">
             <field name="name">Hotel Room</field>
             <field name="res_model">hotel.room</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,pivot</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">Enter details of Customers and Room
                 </p>
