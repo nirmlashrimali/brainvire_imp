@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<odoo>
+
+	<record id="image_view_form_inherit" model="ir.ui.view">
+		<field name="name">sale.product.image</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+		<field name="arch" type="xml">
+			<xpath expr = "/form/sheet/notebook/page/field[@name = 'order_line']/tree/field[@name='product_template_id']" position ="after">
+				<field name="img" widget="image" style="width:20px"/>
+			</xpath>
+		</field>
+	</record>
+
+	<record id="stock_picking_view_form_inherit" model="ir.ui.view">
+		<field name="name">stock.picking.image</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock.view_picking_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//notebook/page[@name='operations']//field[@name='move_ids_without_package']//tree//field[@name='product_uom_qty']" position="before">
+                <field name="img" widget="image" style="width:40px"/>
+			</xpath>
+		</field>
+	</record>
+
+    <record id="account_move_view_form_inherit" model="ir.ui.view">
+        <field name="name">account.move.image</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="before">
+                <field name="img" widget="image" style="width:20px"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

@@ -9,9 +9,6 @@
             <xpath expr="//notebook/page[@name='other_information']//group[@name='sale_info'] //field[@name='invoice_status']" position="after">
                 <field name="sign" widget="signature"/>
             </xpath>
-            <!-- <field name="invoice_status" position="after">
-                <field name="signature"/>
-            </field> -->
         </field>
     </record>
 
