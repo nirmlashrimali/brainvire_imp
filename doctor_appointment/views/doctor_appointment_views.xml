@@ -1,0 +1,45 @@
+<odoo>
+
+    <record id="appointment_form_view" model="ir.ui.view">
+        <field name="name">appointment.form</field>
+        <field name="model">doctor.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Doctor Appointment">
+                <sheet>
+                    <group>
+                        <group string=" Details">
+                            <field name="name"/>
+                            <field name="age"/>
+                            <field name="dob"/>
+                            <field name="email" widget="email"/>
+                            <field name="contact" widget="phone"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="appointment_tree_view" model="ir.ui.view">
+        <field name="name">appointment.tree</field>
+        <field name="model">doctor.appointment</field>
+        <field name="arch" type="xml">
+            <tree string="Doctor Appointment">
+
+                <field name="name"/>
+                <field name="age"/>
+                <field name="dob"/>
+                <field name="email" widget="email"/>
+                <field name="contact" widget="phone"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="doctor_appointment_action">
+        <field name="name">Doctor Appointment</field>
+        <field name="res_model">doctor.appointment</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_appointment" name="Appointment"/>
+
+    <menuitem id="menu_doctor_appointment" name="Doctor Appointment" action="doctor_appointment_action" parent="menu_appointment"/>
+</odoo>
