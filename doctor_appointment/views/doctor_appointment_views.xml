@@ -41,5 +41,6 @@
     </record>
     <menuitem id="menu_appointment" name="Appointment"/>
 
-    <menuitem id="menu_doctor_appointment" name="Doctor Appointment" action="doctor_appointment_action" parent="menu_appointment"/>
+    <menuitem id="menu_doctor_appointment" name="Doctor Appointment" action="doctor_appointment_action"
+              parent="menu_appointment"/>
 </odoo>

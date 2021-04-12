@@ -7,14 +7,14 @@
     'company': 'Brainvire Info Tech',
     'website': 'https://www.brainvireinfotech.com',
     'category': 'Tools',
-    'depends': ['base','website'],
+    'depends': ['base', 'website'],
     'data': [
-       'security/ir.model.access.csv',
-       'views/doctor_appointment_views.xml',
-       'views/website_inherit_appointment.xml',
+        'security/ir.model.access.csv',
+        'views/doctor_appointment_views.xml',
+        'views/website_inherit_appointment.xml',
 
-      ],
-        'demo': [],
+    ],
+    'demo': [],
     'installable': True,
     'auto_install': False,
 }
