@@ -87,30 +87,76 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </t>
     </template>
-    <template id ="tmp_patients_form_success" name="Patient Appointment Successfully Submitted">
-     <t t-call="website.layout">
-         <div id="wrap">
-             <div class="container">
-                 <div class="col-md-12">
-                     <div class="alert-alert-success">
-                         Appointment Created Successfully
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </t>
-</template>
-
-
+    <template id="tmp_patients_form_success" name="Patient Appointment Successfully Submitted">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div class="col-md-12">
+                        <div class="alert-alert-success">
+                            Thank You !!
+                            <br></br>
+                            Appointment Created Successfully
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
     <record id="demo_page_menu" model="website.menu">
-        <field name="name">Appointment123</field>
+        <field name="name">Appointment1</field>
         <field name="url">/appointment</field>
         <field name="parent_id" ref="website.main_menu"/>
         <field name="sequence" type="int">50</field>
-    </record>
+    </record>  
 
+    <template id="portal_my_home_sale" name="Show Quotations / Sales Orders" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Appointment</t>
+                <t t-set="url" t-value="'/my/appointment'"/>
+                <t t-set="placeholder_count" t-value="'appointment_count'"/>
+            </t>
+    
+        </xpath>
+    </template>
+
+    <template id="portal_my_appointments" name="My Appointment">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Appointment</t>
+            </t>
+            <t t-if="not appointments">
+                <p>There are currently no  appointments for your account.</p>
+            </t>
+            <t t-if="appointments" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th class="text-right">Name</th>
+                        <th class="text-right">Age</th>
+                        <th class="text-right">DOB</th>
+                        <th class="text-right">Email</th>
+                        <th class="text-right">Contact</th>
+                    </tr>
+                </thead>
+                <t t-foreach="appointments" t-as="appointment">
+                    <tr>                        
+                        <td class="text-right"><span t-field="appointment.name"/></td>
+                        <td class="text-right"><span t-field="appointment.age"/></td>
+                        <td class="text-right"><span t-field="appointment.dob"/></td>
+                        <td class="text-right"><span t-field="appointment.email"/></td>
+                        <td class="text-right"><span t-field="appointment.contact"/></td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+  
 </odoo>
