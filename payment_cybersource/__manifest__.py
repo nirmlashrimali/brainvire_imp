@@ -8,15 +8,14 @@
     'company': 'Brainvire Infotech',
     'website': 'https://www.brainvireinfotech.com',
     'category': 'Tools',
-    'depends': ['base', 'payment_authorize'],
+    'depends': ['base', 'payment'],
     'data': [
         'security/ir.model.access.csv',
         'views/payment_cyber_views.xml',
         'views/payment_cyber_template_views.xml',
         'data/payment_cybersource_data.xml',
+    ],
         
-            ],
-    'demo': [],
-    'installable': True,
-    'auto_install': False,
+    'demo': [],      
+    
 }
