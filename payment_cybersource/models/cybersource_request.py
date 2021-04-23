@@ -1,340 +1,289 @@
 # -*- coding: utf-8 -*-
-
 import logging
 import requests
 import json
+from odoo.exceptions import UserError
+from random import randrange
+import suds
+from suds.client import Client
+from suds.sax.attribute import Attribute
+from suds.sax.element import Element
+from odoo.fields import _
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('suds.client').setLevel(logging.DEBUG)
+
+_logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
 _logger = logging.getLogger(__name__)
 
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('suds.client').setLevel(logging.DEBUG)
+_logger = logging.getLogger(__name__)
 
-class CyberSourceAPI():
 
+class CyberSourceBaseException(Exception):
+    def __init__(self, error_code, value):
+        self.error_code = error_code
+        self.value = value
+
+    def __unicode__(self):
+        return "{0} (Error code: {1})".format(repr(self.value), self.error_code)
+
+    def __str__(self):
+        return self.__unicode__()
+
+
+class CyberScourceError(CyberSourceBaseException):
+    pass
+
+
+class CyberSourceFailure(CyberSourceBaseException):
+    pass
+
+
+class SchemaValidationError(CyberSourceBaseException):
+    def __init(self):
+        self.error_code = -1
+        self.value = "suds encountered an error validating your data against this service's WSDL schema. Please double-check for missing or invalid values, filling all required fields."
+
+
+CYBERSOURCE_RESPONSES = {
+    '100': 'Successful transaction.',
+    '101': 'The request is missing one or more required fields.',
+    '102': 'One or more fields in the request contains invalid data.',
+    '104': 'The merchantReferenceCode sent with this authorization request matches the merchantReferenceCode of another authorization request that you sent in the last 15 minutes.',
+    '150': 'Error: General system failure. ',
+    '151': 'Error: The request was received but there was a server timeout. This error does not include timeouts between the client and the server.',
+    '152': 'Error: The request was received, but a service did not finish running in time.',
+    '201': 'The issuing bank has questions about the request. You do not receive an authorization code in the reply message, but you might receive one verbally by calling the processor.',
+    '202': 'Expired card. You might also receive this if the expiration date you provided does not match the date the issuing bank has on file.',
+    '203': 'General decline of the card. No other information provided by the issuing bank.',
+    '204': 'Insufficient funds in the account.',
+    '205': 'Stolen or lost card.',
+    '207': 'Issuing bank unavailable.',
+    '208': 'Inactive card or card not authorized for card-not-present transactions.',
+    '210': 'The card has reached the credit limit. ',
+    '211': 'Invalid card verification number.',
+    '221': 'The customer matched an entry on the processor\'s negative file.',
+    '231': 'Invalid account number.',
+    '232': 'The card type is not accepted by the payment processor.',
+    '233': 'General decline by the processor.',
+    '234': 'There is a problem with your CyberSource merchant configuration.',
+    '235': 'The requested amount exceeds the originally authorized amount. Occurs, for example, if you try to capture an amount larger than the original authorization amount. This reason code only applies if you are processing a capture through the API.',
+    '236': 'Processor Failure',
+    '238': 'The authorization has already been captured. This reason code only applies if you are processing a capture through the API.',
+    '239': 'The requested transaction amount must match the previous transaction amount. This reason code only applies if you are processing a capture or credit through the API.',
+    '240': 'The card type sent is invalid or does not correlate with the credit card number.',
+    '241': 'The request ID is invalid. This reason code only applies when you are processing a capture or credit through the API.',
+    '242': 'You requested a capture through the API, but there is no corresponding, unused authorization record. Occurs if there was not a previously successful authorization request or if the previously successful authorization has already been used by another capture request. This reason code only applies when you are processing a capture through the API.',
+    '243': 'The transaction has already been settled or reversed.',
+    '246': 'The capture or credit is not voidable because the capture or credit information has already been submitted to your processor. Or, you requested a void for a type of transaction that cannot be voided. This reason code applies only if you are processing a void through the API.',
+    '247': 'You requested a credit for a capture that was previously voided. This reason code applies only if you are processing a void through the API.',
+    '250': 'Error: The request was received, but there was a timeout at the payment processor.',
+    '520': 'The authorization request was approved by the issuing bank but declined by CyberSource based on your Smart Authorization settings.',
+}
+
+
+class CyberSourceAPI:
     AUTH_ERROR_STATUS = 3
 
     def __init__(self, cybersource):
-        """Initiate the environment with the acquirer data.
-
-        :param record acquirer: payment.acquirer account that will be contacted
-        """
         if cybersource.state == 'test':
-            self.url = 'https://apitest.authorize.net/xml/v1/request.api'
+            self.url = "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.177.wsdl"
         else:
-            self.url = 'https://api.authorize.net/xml/v1/request.api'
+            self.url = "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.177.wsdl"
 
-        self.state = cybersource.state
-        self.name = cybersource.cybersource_login
-        self.transaction_key = cybersource.cybersource_transaction_key
+        self.client = Client(self.url)
+        self.client.set_options(headers={'Content-Type': 'application/json'})
 
-    def _cybersource_request(self, data):
-        print("\n\n\n\n\n\n\n---------cybersource_request--------\n\n\n\n")
-        _logger.info('_authorize_request: Sending values to URL %s, values:\n%s', self.url, data)
-        print("\n\n\n\n\n-<<<<<<<<<<<<<<<<<<<<<<<<")
-        resp = requests.post(self.url, json.dumps(data))
-        resp.raise_for_status()
-        resp = json.loads(resp.content)
-        _logger.info("_authorize_request: Received response:\n%s", resp)
-        messages = resp.get('messages')
-        if messages and messages.get('resultCode') == 'Error':
-            return {
-                'err_code': messages.get('message')[0].get('code'),
-                'err_msg': messages.get('message')[0].get('text')
-            }
+        self.password = cybersource.cybersource_transaction_key
+        print("----paswd--", self.password)
+        self.merchantid = cybersource.cybersource_login
+        print("----merchent---", self.merchantid)
 
-        return resp
+    def cybersource_request(self):
+        try:
+            print(self.merchantid)
+            print(self.bill_to)
 
-    # def create_customer_profile(self, partner, opaqueData):
-    #     print("\n\n\n\n\n\n\n---------create_customer_profile--------\n\n\n\n")
-    #     """Create a payment and customer profile in the Authorize.net backend.
+            print(self.payment)
+            # print(self.merchantid)
 
-    #     Creates a customer profile for the partner/credit card combination and links
-    #     a corresponding payment profile to it. Note that a single partner in the Odoo
-    #     database can have multiple customer profiles in Authorize.net (i.e. a customer
-    #     profile is created for every res.partner/payment.token couple).
+            options = dict(
+                merchantID=self.merchantid,
+                merchantReferenceCode=randrange(0, 100),
+                billTo=self.bill_to,
+                purchaseTotals=self.payment,
+            )
 
-    #     :param record partner: the res.partner record of the customer
-    #     :param str cardnumber: cardnumber in string format (numbers only, no separator)
-    #     :param str expiration_date: expiration date in 'YYYY-MM' string format
-    #     :param str card_code: three- or four-digit verification number
+            if getattr(self, 'card', None):
+                ccAuthService = self.client.factory.create('ns0:ccAuthService')
+                ccAuthService._run = 'true'
 
-    #     :return: a dict containing the profile_id and payment_profile_id of the
-    #              newly created customer profile and payment profile
-    #     :rtype: dict
-    #     """
-    #     values = {
-    #         'createCustomerProfileRequest': {
-    #             'merchantAuthentication': {
-    #                 'name': self.name,
-    #                 'transactionKey': self.cybersource_transaction_key
-    #             },
-    #             'profile': {
-    #                 'description': ('ODOO-%s-%s' % (partner.id, uuid4().hex[:8]))[:20],
-    #                 'email': partner.email or '',
-    #                 'paymentProfiles': {
-    #                     'customerType': 'business' if partner.is_company else 'individual',
-    #                     'billTo': {
-    #                         'firstName': '' if partner.is_company else _partner_split_name(partner.name)[0],
-    #                         'lastName':  _partner_split_name(partner.name)[1],
-    #                         'address': (partner.street or '' + (partner.street2 if partner.street2 else '')) or None,
-    #                         'city': partner.city,
-    #                         'state': partner.state_id.name or None,
-    #                         'zip': partner.zip or '',
-    #                         'country': partner.country_id.name or None,
-    #                         'phoneNumber': partner.phone or '',
-    #                     },
-    #                     'payment': {
-    #                         'opaqueData': {
-    #                             'dataDescriptor': opaqueData.get('dataDescriptor'),
-    #                             'dataValue': opaqueData.get('dataValue')
-    #                         }
-    #                     }
-    #                 }
-    #             },
-    #             'validationMode': 'liveMode' if self.state == 'enabled' else 'testMode'
-    #         }
-    #     }
+                options['card'] = self.card
+                options['ccAuthService'] = ccAuthService
 
-    #     response = self._cybersource_request(values)
+            if getattr(self, 'check', None):
+                ecDebitService = self.client.factory.create('ns0:ecDebitService')
+                ecDebitService._run = 'true'
 
-    #     if response and response.get('err_code'):
-    #         raise UserError(_(
-    #             "CyberSource Error:\nCode: %s\nMessage: %s",
-    #             response.get('err_code'), response.get('err_msg'),
-    #         ))
+                options['check'] = self.check
+                options['ecDebitService'] = ecDebitService
+            print("\n\n\n\n\n\n options")
+            print(options)
+            _logger.info('\n\n\n\n\n\ncybersource request: Sending values to URL %s, values:\n%s', self.url, options)
+            res = Client.dict(self.client.service.runTransaction(**options))
+            return res
+        except suds.WebFault:
+            raise SchemaValidationError(101, "some error Occurred")
 
-    #     return {
-    #         'profile_id': response.get('customerProfileId'),
-    #         'payment_profile_id': response.get('customerPaymentProfileIdList')[0]
-    #     }
+    def create_headers(self):
+        wssens = ('wsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd')
+        mustAttribute = Attribute('SOAP-ENV:mustUnderstand', '1')
 
-    # def create_customer_profile_from_tx(self, partner, transaction_id):
-    #     print("\n\n\n\n\n\n\n---------create_customer_profile_from_tx--------\n\n\n\n")
-    #     """Create an Auth.net payment/customer profile from an existing transaction.
+        security = Element('Security', ns=wssens)
+        security.append(mustAttribute)
+        security.append(Attribute('xmlns:wsse',
+                                  'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'))
 
-    #     Creates a customer profile for the partner/credit card combination and links
-    #     a corresponding payment profile to it. Note that a single partner in the Odoo
-    #     database can have multiple customer profiles in Authorize.net (i.e. a customer
-    #     profile is created for every res.partner/payment.token couple).
+        usernametoken = Element('UsernameToken', ns=wssens)
 
-    #     Note that this function makes 2 calls to the authorize api, since we need to
-    #     obtain a partial cardnumber to generate a meaningful payment.token name.
+        username = Element('Username', ns=wssens).setText(self.merchantid)
 
-    #     :param record partner: the res.partner record of the customer
-    #     :param str transaction_id: id of the authorized transaction in the
-    #                                Authorize.net backend
+        passwordType = Attribute('Type',
+                                 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wssusername-token-profile-1.0#PasswordText')
+        password = Element('Password', ns=wssens).setText(self.password)
+        password.append(passwordType)
 
-    #     :return: a dict containing the profile_id and payment_profile_id of the
-    #              newly created customer profile and payment profile as well as the
-    #              last digits of the card number
-    #     :rtype: dict
-    #     """
-    #     values = {
-    #         'createCustomerProfileFromTransactionRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #             'transId': transaction_id,
-    #             'customer': {
-    #                 'merchantCustomerId': ('ODOO-%s-%s' % (partner.id, uuid4().hex[:8]))[:20],
-    #                 'email': partner.email or ''
-    #             }
-    #         }
-    #     }
+        usernametoken.append(username)
+        usernametoken.append(password)
 
-    #     response = self._cybersource_request(values)
+        security.append(usernametoken)
 
-    #     if not response.get('customerProfileId'):
-    #         _logger.warning(
-    #             'Unable to create customer payment profile, data missing from transaction. Transaction_id: %s - Partner_id: %s'
-    #             % (transaction_id, partner)
-    #         )
-    #         return False
+        self.client.set_options(soapheaders=security)
 
-    #     res = {
-    #         'profile_id': response.get('customerProfileId'),
-    #         'payment_profile_id': response.get('customerPaymentProfileIdList')[0]
-    #     }
+    def payment_amount(self, kwargs):
 
-    #     values = {
-    #         'getCustomerPaymentProfileRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #             'customerProfileId': res['profile_id'],
-    #             'customerPaymentProfileId': res['payment_profile_id'],
-    #         }
-    #     }
+        currency = kwargs.get('currency')
+        grandTotalAmount = kwargs.get('grandTotalAmount')
 
-    #     response = self._authorize_request(values)
+        self.payment = self.client.factory.create('ns0:PurchaseTotals')
+        self.payment.currency = "USD"
+        self.payment.grandTotalAmount = grandTotalAmount
 
-    #     res['name'] = response.get('paymentProfile', {}).get('payment', {}).get('creditCard', {}).get('cardNumber')
-    #     return res
-    
-    # # Transaction management
-    # def auth_and_capture(self, token, amount, reference):
-    #     """Authorize and capture a payment for the given amount.
+    def set_card_info(self, kwargs):
+        print("set card info, ", kwargs)
+        expiry = kwargs.get('cc_expiry').split("/")
 
-    #     Authorize and immediately capture a payment for the given payment.token
-    #     record for the specified amount with reference as communication.
+        accountNumber = kwargs.get('accountNumber')
+        expirationMonth = expiry[0]
+        expirationYear = expiry[1]
+        cvNumber = kwargs.get('cvNumber')
+        fullName = kwargs.get('fullName')
+        if not all([fullName, accountNumber, expirationMonth, expirationYear, cvNumber]):
+            raise CyberSourceError('', 'Not all credit card info was gathered')
 
-    #     :param record token: the payment.token record that must be charged
-    #     :param str amount: transaction amount (up to 15 digits with decimal point)
-    #     :param str reference: used as "invoiceNumber" in the Authorize.net backend
+        self.card = self.client.factory.create('ns0:Card')
 
-    #     :return: a dict containing the response code, transaction id and transaction type
-    #     :rtype: dict
-    #     """
-    #     values = {
-    #         'createTransactionRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #             'transactionRequest': {
-    #                 'transactionType': 'authCaptureTransaction',
-    #                 'amount': str(amount),
-    #                 'profile': {
-    #                     'customerProfileId': token.cybersource_profile,
-    #                     'paymentProfile': {
-    #                         'paymentProfileId': token.acquirer_ref,
-    #                     }
-    #                 },
-    #                 'order': {
-    #                     'invoiceNumber': reference[:20],
-    #                     'description': reference[:255],
-    #                 }
-    #             }
+        self.card.accountNumber = accountNumber
+        self.card.fullName = fullName
+        self.card.expirationMonth = '05'
+        self.card.expirationYear = '2021'
+        self.card.cvIndicator = 1
+        self.card.cvNumber = cvNumber
 
-    #         }
-    #     }
-    #     response = self._cybersource_request(values)
-    #     print("----------------->",response)
+    def set_check_info(self, kwargs):
+        # accountType
+        # C: Checking
+        # S: Savings (U.S. dollars only)
+        # X: Corporate checking (U.S. dollars only)
 
-    #     if response and response.get('err_code'):
-    #         return {
-    #             'x_response_code': self.AUTH_ERROR_STATUS,
-    #             'x_response_reason_text': response.get('err_msg')
-    #         }
+        kwargs['account_type'] = 'C'
+        kwargs['bank_transit_number'] = '112200439'
 
-    #     result = {
-    #         'x_response_code': response.get('transactionResponse', {}).get('responseCode'),
-    #         'x_trans_id': response.get('transactionResponse', {}).get('transId'),
-    #         'x_type': 'auth_capture'
-    #     }
-    #     errors = response.get('transactionResponse', {}).get('errors')
-    #     if errors:
-    #         result['x_response_reason_text'] = '\n'.join([e.get('errorText') for e in errors])
-    #     return result
+        fullName = kwargs.get('fullName')
+        accountNumber = kwargs.get('accountNumber')
+        accountType = kwargs.get('account_type')
+        checkNumber = kwargs.get('cvNumber')
 
-    # def cybersource(self, token, amount, reference):
-    #     """Authorize a payment for the given amount.
+        self.check = self.client.factory.create('ns0:Check')
 
-    #     Authorize (without capture) a payment for the given payment.token
-    #     record for the specified amount with reference as communication.
+        self.check.fullName = fullName
+        self.check.accountNumber = accountNumber
+        self.check.accountType = accountType
+        self.check.checkNumber = checkNumber
 
-    #     :param record token: the payment.token record that must be charged
-    #     :param str amount: transaction amount (up to 15 digits with decimal point)
-    #     :param str reference: used as "invoiceNumber" in the Authorize.net backend
+    def billing_info(self, kwargs):
+        print("billing info, ", kwargs)
+        kwargs['title'] = 'Mr.'
+        # kwargs['first_name'] = 'Colin'
+        kwargs['last_name'] = 'Fletcher'
+        # kwargs['street'] = '3800 Quick Hill Rd'
+        kwargs['street1'] = 'Bldg 1-100'
+        # kwargs['city'] = 'Austin'
+        kwargs['state'] = 'TX'
 
-    #     :return: a dict containing the response code, transaction id and transaction type
-    #     :rtype: dict
-    #     """
-    #     values = {
-    #         'createTransactionRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #             'transactionRequest': {
-    #                 'transactionType': 'authOnlyTransaction',
-    #                 'amount': str(amount),
-    #                 'profile': {
-    #                     'customerProfileId': token.cybersource_profile,
-    #                     'paymentProfile': {
-    #                         'paymentProfileId': token.acquirer_ref,
-    #                     }
-    #                 },
-    #                 'order': {
-    #                     'invoiceNumber': reference[:20],
-    #                     'description': reference[:255],
-    #                 }
-    #             }
+        title = kwargs.get('title')
+        firstName = kwargs.get('firstName')
+        lastName = kwargs.get('last_name')
+        street1 = kwargs.get('street')
+        street2 = kwargs.get('street1')
+        city = kwargs.get('city')
+        state = kwargs.get('state')
+        postalCode = kwargs.get('postalCode', None)
+        country = kwargs.get('country', 'US')
+        customerID = kwargs.get('customer_id')
+        email = kwargs.get('email')
+        # co = kwargs.get('email')
+        phoneNumber = kwargs.get('phone')
 
-    #         }
-    #     }
-    #     response = self._cybersource_request(values)
+        # bill
+        self.bill_to = self.client.factory.create('ns0:BillTo')
 
-    #     if response and response.get('err_code'):
-    #         return {
-    #             'x_response_code': self.AUTH_ERROR_STATUS,
-    #             'x_response_reason_text': response.get('err_msg')
-    #         }
+        self.bill_to.title = title
+        self.bill_to.firstName = firstName
+        self.bill_to.lastName = lastName
+        self.bill_to.street1 = street1
+        self.bill_to.street2 = street2
+        self.bill_to.city = city
+        self.bill_to.state = state
+        self.bill_to.postalCode = postalCode
+        self.bill_to.country = country
+        self.bill_to.customerID = customerID
+        self.bill_to.email = email
+        self.bill_to.phoneNumber = phoneNumber
 
-    #     return {
-    #         'x_response_code': response.get('transactionResponse', {}).get('responseCode'),
-    #         'x_trans_id': response.get('transactionResponse', {}).get('transId'),
-    #         'x_type': 'auth_only'
-    #     }
-    
-    # def capture(self, transaction_id, amount):
-    #     """Capture a previously authorized payment for the given amount.
+    def check_response_for_cybersource_error(self):
+        if self.response.reasonCode != 100:
+            print(self.response)
+            raise CyberScourceError(self.response.reasonCode,
+                                    CYBERSOURCE_RESPONSES.get(str(self.response.reasonCode), 'Unknown Failure'))
 
-    #     Capture a previsouly authorized payment. Note that the amount is required
-    #     even though we do not support partial capture.
+    def do_credit_card_test(self, kwargs):
+        self.check = None
+        self.create_headers(kwargs)
+        self.payment_amount(kwargs)
+        self.set_card_info(kwargs)
+        self.billing_info(kwargs)
 
-    #     :param str transaction_id: id of the authorized transaction in the
-    #                                Authorize.net backend
-    #     :param str amount: transaction amount (up to 15 digits with decimal point)
+        self.run_transaction()
 
-    #     :return: a dict containing the response code, transaction id and transaction type
-    #     :rtype: dict
-    #     """
-    #     values = {
-    #         'createTransactionRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #             'transactionRequest': {
-    #                 'transactionType': 'priorAuthCaptureTransaction',
-    #                 'amount': str(amount),
-    #                 'refTransId': transaction_id,
-    #             }
-    #         }
-    #     }
+        self.check_response_for_cybersource_error()
 
-    #     response = self._cybersource_request(values)
+        print(self.response)
 
-    #     if response and response.get('err_code'):
-    #         return {
-    #             'x_response_code': self.AUTH_ERROR_STATUS,
-    #             'x_response_reason_text': response.get('err_msg')
-    #         }
+    def do_ach_test(self, kwargs):
+        self.card = None
+        self.create_headers()
+        self.payment_amount()
+        self.set_check_info()
+        self.billing_info()
 
-    #     return {
-    #         'x_response_code': response.get('transactionResponse', {}).get('responseCode'),
-    #         'x_trans_id': response.get('transactionResponse', {}).get('transId'),
-    #         'x_type': 'prior_auth_capture'
-    #     }
-    
-    # # Test
-    # def test_authenticate(self):
-    #     """Test Authorize.net communication with a simple credentials check.
+        self.run_transaction()
 
-    #     :return: True if authentication was successful, else False (or throws an error)
-    #     :rtype: bool
-    #     """
-    #     values = {
-    #         'authenticateTestRequest': {
-    #             "merchantAuthentication": {
-    #                 "name": self.name,
-    #                 "transactionKey": self.cybersource_transaction_key
-    #             },
-    #         }
-    #     }
+        self.check_response_for_cybersource_error()
 
-    #     response = self._cybersource_request(values)
-    #     if response and response.get('err_code'):
-    #         return False
-    #     return True
+        print(self.response)

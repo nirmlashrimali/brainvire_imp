@@ -15,7 +15,7 @@
         'views/payment_cyber_template_views.xml',
         'data/payment_cybersource_data.xml',
     ],
-        
-    'demo': [],      
-    
+
+    'demo': [],
+
 }
